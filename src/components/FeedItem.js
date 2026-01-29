@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 
 export const FeedItem = ({ item }) => {
   return (
@@ -10,13 +11,15 @@ export const FeedItem = ({ item }) => {
       </View>
       
       {/* 
-        TASK 3: Asset Optimization 
-        Currently using standard Image component. 
-        Candidate should upgrade this to use expo-image with blurhash.
+        TASK 3: Asset Optimization - Implemented
+        Using expo-image with blurhash placeholder and transition.
       */}
       <Image 
-        source={{ uri: item.image }} 
-        style={styles.image} 
+        source={item.image} 
+        style={styles.image}
+        placeholder={item.blurhash}
+        contentFit="cover"
+        transition={1000}
       />
       
       <Text style={styles.description}>{item.description}</Text>
