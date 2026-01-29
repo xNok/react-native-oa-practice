@@ -1,0 +1,69 @@
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { fetchFeed } from '../api/mockApi';
+import { FeedItem } from './FeedItem';
+
+export const Feed = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // TASK 4: Deterministic Data Fetching
+  // Currently just fetches the first page.
+  // Candidates need to implement pagination using the cursor from the API.
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetchFeed(0);
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  if (loading && data.length === 0) {
+    // TASK 1: Layout Stability
+    // Candidate should replace this spinner with a Skeleton placeholder
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={{marginTop: 10}}>Loading Feed...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* 
+        TASK 2: Virtualized List Performance
+        Candidate should replace FlatList with FlashList
+      */}
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <FeedItem item={item} />}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f8f8',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  listContent: {
+    paddingTop: 16,
+  },
+});

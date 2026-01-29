@@ -6,11 +6,14 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "setup": "./install_dependencies.sh"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
+    "@shopify/flash-list": "2.0.2",
     "expo": "~54.0.32",
+    "expo-image": "~3.0.11",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
     "react-dom": "19.1.0",
