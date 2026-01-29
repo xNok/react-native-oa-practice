@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { fetchFeed } from '../api/mockApi';
 import { FeedItem } from './FeedItem';
+import { FeedItemSkeleton } from './FeedItemSkeleton';
 
 export const Feed = () => {
   const [data, setData] = useState([]);
@@ -27,12 +28,12 @@ export const Feed = () => {
   }, []);
 
   if (loading && data.length === 0) {
-    // TASK 1: Layout Stability
-    // Candidate should replace this spinner with a Skeleton placeholder
+    // TASK 1: Layout Stability - Implemented
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-        <Text style={{marginTop: 10}}>Loading Feed...</Text>
+      <View style={[styles.container, styles.listContent]}>
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <FeedItemSkeleton key={i} />
+        ))}
       </View>
     );
   }
