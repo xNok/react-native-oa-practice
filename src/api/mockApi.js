@@ -8,8 +8,9 @@ const DATA_SOURCE = Array.from({ length: 100 }).map((_, i) => ({
 }));
 
 export const fetchFeed = async (cursor = 0, limit = 10) => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  // Simulate network delay (random between 1s and 3s to be realistic)
+  const delay = Math.floor(Math.random() * 2000) + 1000;
+  await new Promise((resolve) => setTimeout(resolve, delay));
 
   const start = Number(cursor);
   const end = start + limit;
