@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { fetchFeed } from '../api/mockApi';
 import { FeedItem } from './FeedItem';
@@ -27,6 +27,14 @@ export const Feed = () => {
     loadData();
   }, []);
 
+  const renderItem = useCallback(({ item }) => <FeedItem item={item} />, []);
+
+  const getItemLayout = useCallback((data, index) => ({
+    length: 410,
+    offset: 410 * index,
+    index,
+  }), []);
+
   if (loading && data.length === 0) {
     // TASK 1: Layout Stability - Implemented
     return (
@@ -41,14 +49,19 @@ export const Feed = () => {
   return (
     <View style={styles.container}>
       {/* 
-        TASK 2: Virtualized List Performance
-        Candidate should replace FlatList with FlashList
+        TASK 2: Virtualized List Performance - Advanced Manual Implementation 
       */}
       <FlatList
         data={data}
-        renderItem={({ item }) => <FeedItem item={item} />}
+        renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}
+        getItemLayout={getItemLayout}
+        initialNumToRender={5}
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        updateCellsBatchingPeriod={50}
+        removeClippedSubviews={true}
       />
     </View>
   );
