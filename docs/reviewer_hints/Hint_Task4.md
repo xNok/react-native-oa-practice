@@ -27,7 +27,20 @@ const loadMore = async () => {
   setLoading(false);
 };
 
-// ... in FlashList/FlatList
+  setLoading(false);
+};
+
+// ... in FlashList or FlatList
+// Note: If using FlashList, the props are identical to FlatList for this feature.
 onEndReached={loadMore}
 onEndReachedThreshold={0.5}
 ```
+
+## Alternative: Custom 'ScrollView' Implementation
+If the candidate implemented a custom virtualized list using `ScrollView` (Task 2 Expert):
+
+1.  **State**: They still need `nextCursor` and `data`.
+2.  **Trigger**: `onEndReached` doesn't exist on standard `ScrollView`.
+    *   They must check scroll position manually in the `onScroll` event.
+    *   `if (contentOffset.y + layoutHeight >= contentSize.height - threshold) { loadMore() }`
+3.  **Correctness**: Check that they debounce or throttle this check so they don't fire 100 API calls as the user scrolls past the threshold.

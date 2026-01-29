@@ -1,18 +1,18 @@
 # Step 3: Asset Optimization (Progressive Loading)
 
 ## Goal
-Eliminate "Empty State" anxiety.
+Eliminate "Empty State" anxiety and improve the visual experience on slow networks.
 
-## Action
-Use Blur-Hash or low-res "preview" images that load instantly, followed by high-res assets.
+## Challenge
+Currently, image areas remain blank or white until the full image is downloaded. On slower interactions, this makes the app feel unresponsive. The data source, however, provides a `blurhash` string which can be used to generate a lightweight preview.
 
-## Benefit
-Provides immediate visual feedback, even on 3G/Edge connections.
+## Acceptance Criteria
+1.  **Immediate Feedback**: Image containers should never be empty. They must display a blurred preview immediately.
+2.  **Smooth Transition**: When the high-resolution image finishes loading, it should cross-fade or transition smoothly over the preview.
+3.  **Modern Library Usage**: Leverage the installed image library capabilities rather than building a custom canvas solution.
 
 ## Implementation Tasks
-1. Open `src/components/FeedItem.js`.
-2. Import `Image` from `expo-image` (it is already installed).
-3. Replace the standard React Native `Image` component.
-4. Pass the `item.blurhash` to the `placeholder` prop of the new Image component.
-5. Add a `transition` prop (e.g., 1000ms) to make the image fade in smoothly.
+1.  Identify where images are rendered in the Feed.
+2.  Upgrade the image rendering logic to utilize the provided `blurhash` property.
+3.  Enable a fade-in animation for a polished feel.
 
