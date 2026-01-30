@@ -1,31 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
-import { fetchFeed } from '../api/mockApi';
+import { useFeed } from '../hooks/useFeed';
 import { FeedItem } from './FeedItem';
 import { FeedItemSkeleton } from './FeedItemSkeleton';
 
 export const Feed = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // TASK 4: Deterministic Data Fetching
-  // Currently just fetches the first page.
-  // Candidates need to implement pagination using the cursor from the API.
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const response = await fetchFeed(0);
-      setData(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
+  const { data, loading, loadMore, isFetchingMore } = useFeed();
 
   const renderItem = useCallback(({ item }) => <FeedItem item={item} />, []);
 
@@ -34,6 +14,15 @@ export const Feed = () => {
     offset: 410 * index,
     index,
   }), []);
+
+  const renderFooter = () => {
+    if (!isFetchingMore) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
 
   if (loading && data.length === 0) {
     // TASK 1: Layout Stability - Implemented
@@ -62,6 +51,11 @@ export const Feed = () => {
         maxToRenderPerBatch={5}
         updateCellsBatchingPeriod={50}
         removeClippedSubviews={true}
+        
+        // TASK 4: Deterministic Data Fetching - Implemented via custom hook
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
       />
     </View>
   );
@@ -80,4 +74,9 @@ const styles = StyleSheet.create({
   listContent: {
     paddingTop: 16,
   },
+  footerLoader: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
