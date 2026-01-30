@@ -5,7 +5,15 @@ import { FeedItem } from './FeedItem';
 import { FeedItemSkeleton } from './FeedItemSkeleton';
 
 export const Feed = () => {
-  const { data, loading, loadMore, isFetchingMore } = useFeed();
+  const { 
+    data, 
+    loading, 
+    loadMore, 
+    loadPrevious, 
+    isFetchingMore, 
+    isFetchingPrevious,
+    hasPrevious 
+  } = useFeed();
 
   const renderItem = useCallback(({ item }) => <FeedItem item={item} />, []);
 
@@ -24,6 +32,14 @@ export const Feed = () => {
     );
   };
 
+  const handleScroll = (event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    // If scrolled to top (with some threshold) and we have previous items
+    if (offsetY < 50 && hasPrevious && !isFetchingPrevious) {
+      loadPrevious();
+    }
+  };
+
   if (loading && data.length === 0) {
     // TASK 1: Layout Stability - Implemented
     return (
@@ -37,6 +53,11 @@ export const Feed = () => {
 
   return (
     <View style={styles.container}>
+      {hasPrevious && isFetchingPrevious && (
+         <View style={styles.headerLoader}>
+            <ActivityIndicator size="small" />
+         </View>
+      )}
       {/* 
         TASK 2: Virtualized List Performance - Advanced Manual Implementation 
       */}
@@ -48,9 +69,14 @@ export const Feed = () => {
         getItemLayout={getItemLayout}
         initialNumToRender={5}
         windowSize={5}
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+        }}
         maxToRenderPerBatch={5}
         updateCellsBatchingPeriod={50}
         removeClippedSubviews={true}
+        onScroll={handleScroll}
+        scrollEventThrottle={16} // Trigger scroll event often enough
         
         // TASK 4: Deterministic Data Fetching - Implemented via custom hook
         onEndReached={loadMore}
@@ -78,5 +104,11 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerLoader: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f8f8',
   }
 });
